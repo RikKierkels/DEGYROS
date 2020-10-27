@@ -1,0 +1,30 @@
+{
+  "name": "Yapi",
+  "version": "0.0.1",
+  "main": "src/server.ts",
+  "repository": "https://github.com/RikKierkels/Y",
+  "author": "Rik Kierkels",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon",
+    "codegen": "graphql-codegen --config codegen.yml"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.19.0",
+    "@graphql-codegen/typescript": "1.17.11",
+    "@graphql-codegen/typescript-mongodb": "1.17.8",
+    "@graphql-codegen/typescript-resolvers": "1.17.10",
+    "@types/graphql": "^14.5.0",
+    "@types/mongodb": "^3.5.31",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.1.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  },
+  "dependencies": {
+    "apollo-server": "^2.18.2",
+    "graphql": "^15.4.0",
+    "mongodb": "^3.6.2"
+  }
+}
