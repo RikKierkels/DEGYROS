@@ -8,9 +8,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
+  DateTime: any;
 };
+
 
 
 
@@ -22,24 +22,28 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  order?: Maybe<Order>;
-};
-
-export type Order = {
-  __typename?: 'Order';
-  id: Scalars['ID'];
+  transactions?: Maybe<Array<Transaction>>;
 };
 
 export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
+  purchaseDate: Scalars['DateTime'];
+  product: Scalars['String'];
+  ISIN: Scalars['String'];
+  exchange: Scalars['String'];
+  count: Scalars['Int'];
+  rate: Price;
+  purchaseValue: Price;
+  costs: Price;
+  total: Price;
 };
 
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
-
+export type Price = {
+  __typename?: 'Price';
+  amount: Scalars['Int'];
+  currency: Scalars['String'];
+};
 
 export type AdditionalEntityFields = {
   path?: Maybe<Scalars['String']>;
@@ -124,26 +128,27 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Query: ResolverTypeWrapper<{}>;
-  Order: ResolverTypeWrapper<Order>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   Transaction: ResolverTypeWrapper<Transaction>;
-  CacheControlScope: CacheControlScope;
-  Upload: ResolverTypeWrapper<Scalars['Upload']>;
-  AdditionalEntityFields: AdditionalEntityFields;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Price: ResolverTypeWrapper<Price>;
+  AdditionalEntityFields: AdditionalEntityFields;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  DateTime: Scalars['DateTime'];
   Query: {};
-  Order: Order;
-  ID: Scalars['ID'];
   Transaction: Transaction;
-  Upload: Scalars['Upload'];
-  AdditionalEntityFields: AdditionalEntityFields;
+  ID: Scalars['ID'];
   String: Scalars['String'];
+  Int: Scalars['Int'];
+  Price: Price;
+  AdditionalEntityFields: AdditionalEntityFields;
   Boolean: Scalars['Boolean'];
 };
 
@@ -182,29 +187,39 @@ export type MapDirectiveArgs = {   path: Scalars['String']; };
 
 export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
-};
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
-export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  transactions?: Resolver<Maybe<Array<ResolversTypes['Transaction']>>, ParentType, ContextType>;
 };
 
 export type TransactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  purchaseDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  product?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ISIN?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  exchange?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  rate?: Resolver<ResolversTypes['Price'], ParentType, ContextType>;
+  purchaseValue?: Resolver<ResolversTypes['Price'], ParentType, ContextType>;
+  costs?: Resolver<ResolversTypes['Price'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Price'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
-  name: 'Upload';
-}
+export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
-  Order?: OrderResolvers<ContextType>;
   Transaction?: TransactionResolvers<ContextType>;
-  Upload?: GraphQLScalarType;
+  Price?: PriceResolvers<ContextType>;
 };
 
 
@@ -231,3 +246,6 @@ export type DirectiveResolvers<ContextType = any> = {
  */
 export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;
 import { ObjectID } from 'mongodb';
+export type TransactionDbObject = {
+  _id: ObjectID,
+};

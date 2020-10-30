@@ -48,3 +48,6 @@ infrastructure/frontend/.serverless
 .env
 
 report.*.json
+
+# Graphql Config
+/graphql-config/*

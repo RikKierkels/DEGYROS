@@ -1,6 +1,7 @@
 overwrite: true
-schema: "http://localhost:4000"
-documents: null
+schema: "./src/schema.ts"
+require:
+  - ts-node/register
 generates:
   src/generated/graphql.ts:
     plugins:

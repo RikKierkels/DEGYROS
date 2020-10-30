@@ -1,25 +1,14 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer } from 'apollo-server';
+import { DateTimeResolver } from 'graphql-scalars';
+import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb';
 import { Resolvers } from './generated/graphql';
-
-const typeDefs = gql`
-  type Query {
-    order: Order
-  }
-
-  type Order {
-    id: ID!
-  }
-
-  type Transaction {
-    id: ID!
-  }
-`;
+import typeDefs from './schema';
 
 const resolvers: Resolvers = {
   Query: {},
-  Order: {},
   Transaction: {},
+  DateTime: DateTimeResolver,
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs: [DIRECTIVES, typeDefs], resolvers: {} });
 server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
