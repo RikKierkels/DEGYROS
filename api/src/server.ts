@@ -1,9 +1,8 @@
-import { join } from 'path';
-import { ApolloServer } from 'apollo-server';
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb';
-import { loadFilesSync } from '@graphql-tools/load-files';
-import typeDefs from './schema';
+import { createApolloServer } from './apollo';
+import { MongoClient } from 'mongodb';
 
-const resolvers = loadFilesSync(join(__dirname, './**/*.resolvers.*'));
-const server = new ApolloServer({ typeDefs: [DIRECTIVES, typeDefs], resolvers });
+const mongoClient = new MongoClient('mongodb://localhost:27017');
+mongoClient.connect();
+
+const server = createApolloServer();
 server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));

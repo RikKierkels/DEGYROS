@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon",
+    "test": "jest",
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "devDependencies": {
@@ -15,15 +16,20 @@
     "@graphql-codegen/typescript": "1.17.11",
     "@graphql-codegen/typescript-resolvers": "1.17.10",
     "@types/graphql": "^14.5.0",
+    "@types/jest": "^26.0.15",
     "@types/mongodb": "^3.5.31",
+    "apollo-server-testing": "^2.18.2",
+    "jest": "^26.6.1",
     "nodemon": "^2.0.6",
     "prettier": "^2.1.2",
+    "ts-jest": "^26.4.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "1.17.8",
     "@graphql-tools/load-files": "^6.2.4",
+    "apollo-datasource-mongodb": "^0.2.8",
     "apollo-server": "^2.18.2",
     "graphql": "^15.4.0",
     "graphql-scalars": "^1.4.1",
