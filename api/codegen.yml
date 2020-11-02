@@ -8,3 +8,6 @@ generates:
       - "typescript"
       - "typescript-resolvers"
       - "typescript-mongodb"
+    config:
+      mappers:
+        Transaction: "TransactionDbObject"

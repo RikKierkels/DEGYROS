@@ -29,8 +29,12 @@
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "1.17.8",
     "@graphql-tools/load-files": "^6.2.4",
-    "apollo-datasource-mongodb": "^0.2.8",
+    "@types/bson": "^4.0.3",
+    "apollo-datasource": "^0.7.2",
     "apollo-server": "^2.18.2",
+    "apollo-server-caching": "^0.5.2",
+    "bson": "^4.2.0",
+    "dataloader": "^2.0.0",
     "graphql": "^15.4.0",
     "graphql-scalars": "^1.4.1",
     "mongodb": "^3.6.2"

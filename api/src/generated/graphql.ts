@@ -130,7 +130,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Query: ResolverTypeWrapper<{}>;
-  Transaction: ResolverTypeWrapper<Transaction>;
+  Transaction: ResolverTypeWrapper<TransactionDbObject>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -143,7 +143,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   Query: {};
-  Transaction: Transaction;
+  Transaction: TransactionDbObject;
   ID: Scalars['ID'];
   String: Scalars['String'];
   Int: Scalars['Int'];

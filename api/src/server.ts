@@ -4,5 +4,5 @@ import { MongoClient } from 'mongodb';
 const mongoClient = new MongoClient('mongodb://localhost:27017');
 mongoClient.connect();
 
-const server = createApolloServer();
+const server = createApolloServer(mongoClient);
 server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
