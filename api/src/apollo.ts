@@ -16,7 +16,7 @@ export type Context = {
 };
 
 const createDataSources = (mongoClient: MongoClient): DataSources => {
-  const collection = mongoClient.db().collection;
+  const collection = (name: string) => mongoClient.db().collection(name);
 
   return {
     transactions: new MongoDataSource<TransactionDbObject>(collection('transactions')),
