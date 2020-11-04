@@ -28,6 +28,7 @@ export type Query = {
 export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
+  orderId: Scalars['String'];
   purchaseDate: Scalars['DateTime'];
   product: Scalars['String'];
   ISIN: Scalars['String'];
@@ -42,6 +43,7 @@ export type Transaction = {
 export type Price = {
   __typename?: 'Price';
   amount: Scalars['Int'];
+  numberOfDecimals: Scalars['Int'];
   currency: Scalars['String'];
 };
 
@@ -197,6 +199,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type TransactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orderId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   purchaseDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   product?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   ISIN?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -211,6 +214,7 @@ export type TransactionResolvers<ContextType = any, ParentType extends Resolvers
 
 export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  numberOfDecimals?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -248,4 +252,20 @@ export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextT
 import { ObjectID } from 'mongodb';
 export type TransactionDbObject = {
   _id: ObjectID,
+  orderId: string,
+  purchaseDate: any,
+  product: string,
+  ISIN: string,
+  exchange: string,
+  count: number,
+  rate: PriceDbObject,
+  purchaseValue: PriceDbObject,
+  costs: PriceDbObject,
+  total: PriceDbObject,
+};
+
+export type PriceDbObject = {
+  amount: number,
+  numberOfDecimals: number,
+  currency: string,
 };

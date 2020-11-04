@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can retrieve transactions 1`] = `
+Object {
+  "transactions": Array [
+    Object {
+      "ISIN": "IE00B4X9L533",
+      "costs": Object {
+        "amount": 0,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "count": 2,
+      "exchange": "EPA",
+      "id": "5fa3135e0429c9a69d22f873",
+      "product": "HSBC MSCI WORLD",
+      "purchaseDate": Date { NaN },
+      "purchaseValue": Object {
+        "amount": 4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 20339,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": 4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+    Object {
+      "ISIN": "IE00B3XXRP09",
+      "costs": Object {
+        "amount": 0,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "count": 2,
+      "exchange": "EAM",
+      "id": "5fa3135e0429c9a69d22f874",
+      "product": "VANGUARD S&P500",
+      "purchaseDate": Date { NaN },
+      "purchaseValue": Object {
+        "amount": 10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 54981,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": 10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+  ],
+}
+`;

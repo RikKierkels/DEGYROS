@@ -7,28 +7,31 @@ import typeDefs from './schema';
 import { TransactionDbObject } from './generated/graphql';
 import { MongoDataSource } from './common/datasource-mongo';
 
-type DataSources = {
-  transactions: MongoDataSource<TransactionDbObject>;
+export type DataSources = {
+  transaction: MongoDataSource<TransactionDbObject>;
 };
 
 export type Context = {
   dataSources: DataSources;
 };
 
-const createDataSources = (mongoClient: MongoClient): DataSources => {
+export const createDataSources = (mongoClient: MongoClient): DataSources => {
   const collection = (name: string) => mongoClient.db().collection(name);
 
   return {
-    transactions: new MongoDataSource<TransactionDbObject>(collection('transactions')),
+    transaction: new MongoDataSource<TransactionDbObject>(collection('transactions')),
   };
 };
 
-export const createApolloServer = (mongoClient: MongoClient): ApolloServer => {
+export const createApolloServer = (
+  mongoClient: MongoClient,
+  dataSources = createDataSources(mongoClient),
+): ApolloServer => {
   const resolvers = loadFilesSync(join(__dirname, './**/*.resolvers.*'));
   const schema = makeExecutableSchema({
     resolvers,
     typeDefs: [typeDefs, typeDefsMongo],
     inheritResolversFromInterfaces: true,
   });
-  return new ApolloServer({ schema, dataSources: () => createDataSources(mongoClient) });
+  return new ApolloServer({ schema, dataSources: () => dataSources });
 };

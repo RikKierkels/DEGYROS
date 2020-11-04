@@ -9,19 +9,21 @@ export default gql`
 
   type Transaction @entity {
     id: ID! @id
-    purchaseDate: DateTime!
-    product: String!
-    ISIN: String!
-    exchange: String!
-    count: Int!
-    rate: Price!
-    purchaseValue: Price!
-    costs: Price!
-    total: Price!
+    orderId: String! @column
+    purchaseDate: DateTime! @column
+    product: String! @column
+    ISIN: String! @column
+    exchange: String! @column
+    count: Int! @column
+    rate: Price! @embedded
+    purchaseValue: Price! @embedded
+    costs: Price! @embedded
+    total: Price! @embedded
   }
 
-  type Price {
-    amount: Int!
-    currency: String!
+  type Price @entity(embedded: true) {
+    amount: Int! @column
+    numberOfDecimals: Int! @column
+    currency: String! @column
   }
 `;
