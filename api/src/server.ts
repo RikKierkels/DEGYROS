@@ -1,8 +1,9 @@
 import { createApolloServer } from './apollo';
-import { MongoClient } from 'mongodb';
+import { createMongoClient } from './mongo';
 
-const mongoClient = new MongoClient('mongodb://localhost:27017', { useUnifiedTopology: true });
-mongoClient.connect();
-
-const server = createApolloServer(mongoClient);
-server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+(async () => {
+  const mongoClient = await createMongoClient('mongodb://localhost:27017');
+  createApolloServer(mongoClient)
+    .listen()
+    .then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+})();

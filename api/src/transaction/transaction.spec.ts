@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server';
-import { createApolloTestClient, createInMemoryMongoClient } from '../common/utils-test';
+import { createApolloTestClient, createMongoClientWithInMemoryDb } from '../common/utils-test';
 import { createDataSources } from '../apollo';
 import { ObjectId } from 'bson';
 
 test('can retrieve transactions', async () => {
-  const mongoClient = await createInMemoryMongoClient();
+  const mongoClient = await createMongoClientWithInMemoryDb();
   const dataSources = createDataSources(mongoClient);
 
   await dataSources.transaction.collection.insertMany([
