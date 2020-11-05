@@ -4,7 +4,6 @@ import { Collection, FilterQuery, ObjectId } from 'mongodb';
 import DataLoader from 'dataloader';
 import { hasValue } from './util';
 import { EJSON } from 'bson';
-import { Context } from '../apollo';
 
 type MongoDataSourceConfig = {
   timeToLive: number;

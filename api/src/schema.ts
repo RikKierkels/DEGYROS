@@ -10,7 +10,7 @@ export default gql`
   type Transaction @entity {
     id: ID! @id
     orderId: String! @column
-    purchaseDate: DateTime! @column
+    purchaseDate: DateTime! @column(overrideType: "string")
     product: String! @column
     ISIN: String! @column
     exchange: String! @column

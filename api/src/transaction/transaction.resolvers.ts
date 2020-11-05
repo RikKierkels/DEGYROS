@@ -9,7 +9,6 @@ const resolvers: Resolvers<Context> = {
   },
   Transaction: {
     id: ({ _id }) => _id.toHexString(),
-    purchaseDate: ({ purchaseDate }) => Date.parse(purchaseDate),
   },
 };
 

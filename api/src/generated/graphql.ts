@@ -253,7 +253,7 @@ import { ObjectID } from 'mongodb';
 export type TransactionDbObject = {
   _id: ObjectID,
   orderId: string,
-  purchaseDate: any,
+  purchaseDate: string,
   product: string,
   ISIN: string,
   exchange: string,

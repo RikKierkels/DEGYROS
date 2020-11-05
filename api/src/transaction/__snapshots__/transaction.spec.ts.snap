@@ -14,7 +14,7 @@ Object {
       "exchange": "EPA",
       "id": "5fa3135e0429c9a69d22f873",
       "product": "HSBC MSCI WORLD",
-      "purchaseDate": Date { NaN },
+      "purchaseDate": 2020-11-12T21:55:00.000Z,
       "purchaseValue": Object {
         "amount": 4068,
         "currency": "EUR",
@@ -42,7 +42,7 @@ Object {
       "exchange": "EAM",
       "id": "5fa3135e0429c9a69d22f874",
       "product": "VANGUARD S&P500",
-      "purchaseDate": Date { NaN },
+      "purchaseDate": 2020-12-31T09:55:00.000Z,
       "purchaseValue": Object {
         "amount": 10996,
         "currency": "EUR",
