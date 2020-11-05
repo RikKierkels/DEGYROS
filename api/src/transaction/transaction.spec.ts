@@ -11,7 +11,7 @@ test('can retrieve transactions', async () => {
     {
       _id: new ObjectId('5fa3135e0429c9a69d22f873'),
       orderId: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
-      purchaseDate: '1604512082',
+      purchaseDate: '2020-11-12T21:55:00.000Z',
       product: 'HSBC MSCI WORLD',
       ISIN: 'IE00B4X9L533',
       exchange: 'EPA',
@@ -40,7 +40,7 @@ test('can retrieve transactions', async () => {
     {
       _id: new ObjectId('5fa3135e0429c9a69d22f874'),
       orderId: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
-      purchaseDate: '1604512124',
+      purchaseDate: '2020-12-31T09:55:00.000Z',
       product: 'VANGUARD S&P500',
       ISIN: 'IE00B3XXRP09',
       exchange: 'EAM',
