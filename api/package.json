@@ -37,6 +37,7 @@
     "apollo-server-caching": "^0.5.2",
     "bson": "^4.2.0",
     "dataloader": "^2.0.0",
+    "dotenv": "^8.2.0",
     "graphql": "^15.4.0",
     "graphql-scalars": "^1.4.1",
     "mongodb": "^3.6.2"
