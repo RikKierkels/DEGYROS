@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`given a valid transactions csv file, when adding transactions, adds the transactions and returns all transactions 1`] = `
+Object {
+  "addTransactions": Array [
+    Object {
+      "ISIN": "IE00B4X9L533",
+      "costs": Object {
+        "amount": 0,
+        "currency": "",
+        "numberOfDecimals": 0,
+      },
+      "count": 2,
+      "exchange": "EPA",
+      "id": "03065814-a998-4876-8b6a-bafdeb26664e",
+      "product": "HSBC MSCI WORLD",
+      "purchaseDate": 2020-10-26T08:21:00.000Z,
+      "purchaseValue": Object {
+        "amount": -4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 20339,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": -4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+    Object {
+      "ISIN": "IE00B3XXRP09",
+      "costs": Object {
+        "amount": 0,
+        "currency": "",
+        "numberOfDecimals": 0,
+      },
+      "count": 2,
+      "exchange": "EAM",
+      "id": "29f09ed1-684c-4df3-8295-e12b7e8460d6",
+      "product": "VANGUARD S&P500",
+      "purchaseDate": 2020-10-26T08:21:00.000Z,
+      "purchaseValue": Object {
+        "amount": -10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 54981,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": -10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+    Object {
+      "ISIN": "IE00B4X9L533",
+      "costs": Object {
+        "amount": 0,
+        "currency": "",
+        "numberOfDecimals": 0,
+      },
+      "count": 8,
+      "exchange": "EPA",
+      "id": "1548279b-689e-420a-b406-05fc32c09612",
+      "product": "HSBC MSCI WORLD",
+      "purchaseDate": 2020-09-28T07:09:00.000Z,
+      "purchaseValue": Object {
+        "amount": -16201,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 20251,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": -16201,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+  ],
+}
+`;
+
+exports[`given existing transactions, when adding transactions that already exist, only adds the transactions that dont exist 1`] = `
+Object {
+  "addTransactions": Array [
+    Object {
+      "ISIN": "IE00B4X9L533",
+      "costs": Object {
+        "amount": 0,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "count": 2,
+      "exchange": "EPA",
+      "id": "03065814-a998-4876-8b6a-bafdeb26664e",
+      "product": "HSBC MSCI WORLD",
+      "purchaseDate": 2020-11-12T21:55:00.000Z,
+      "purchaseValue": Object {
+        "amount": 4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 20339,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": 4068,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+    Object {
+      "ISIN": "IE00B3XXRP09",
+      "costs": Object {
+        "amount": 0,
+        "currency": "",
+        "numberOfDecimals": 0,
+      },
+      "count": 2,
+      "exchange": "EAM",
+      "id": "29f09ed1-684c-4df3-8295-e12b7e8460d6",
+      "product": "VANGUARD S&P500",
+      "purchaseDate": 2020-10-26T08:21:00.000Z,
+      "purchaseValue": Object {
+        "amount": -10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+      "rate": Object {
+        "amount": 54981,
+        "currency": "EUR",
+        "numberOfDecimals": 3,
+      },
+      "total": Object {
+        "amount": -10996,
+        "currency": "EUR",
+        "numberOfDecimals": 2,
+      },
+    },
+  ],
+}
+`;

@@ -1,16 +1,15 @@
 import { gql } from 'apollo-server';
-import { createApolloTestClient, createMongoClientWithInMemoryDb } from '../common/utils-test';
+import { createApolloTestClient, createMongoClientWithInMemoryDb } from '../common/test-utils';
 import { createDataSources } from '../apollo';
-import { ObjectId } from 'bson';
 
-test('can retrieve transactions', async () => {
+test('given existing transactions, when retrieving transactions, returns all transactions', async () => {
   const mongoClient = await createMongoClientWithInMemoryDb();
-  const dataSources = createDataSources(mongoClient);
+  const dataSources = createDataSources(mongoClient.instance());
+  const { query } = createApolloTestClient(dataSources);
 
   await dataSources.transaction.collection.insertMany([
     {
-      _id: new ObjectId('5fa3135e0429c9a69d22f873'),
-      orderId: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
+      _id: '03065814-a998-4876-8b6a-bafdeb26664e',
       purchaseDate: '2020-11-12T21:55:00.000Z',
       product: 'HSBC MSCI WORLD',
       ISIN: 'IE00B4X9L533',
@@ -38,8 +37,7 @@ test('can retrieve transactions', async () => {
       },
     },
     {
-      _id: new ObjectId('5fa3135e0429c9a69d22f874'),
-      orderId: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
+      _id: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
       purchaseDate: '2020-12-31T09:55:00.000Z',
       product: 'VANGUARD S&P500',
       ISIN: 'IE00B3XXRP09',
@@ -98,10 +96,11 @@ test('can retrieve transactions', async () => {
       }
     }
   `;
-  const { query } = createApolloTestClient(mongoClient, dataSources);
 
   const { data, errors } = await query({ query: transactionsQuery });
 
   expect(errors).toBeUndefined();
   expect(data).toMatchSnapshot();
+
+  await mongoClient.stop();
 });

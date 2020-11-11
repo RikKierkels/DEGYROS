@@ -1,16 +1,21 @@
 import { createTestClient } from 'apollo-server-testing';
-import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApolloServer, DataSources } from '../apollo';
 import { createMongoClient } from '../mongo';
 
-export const createMongoClientWithInMemoryDb = async (): Promise<MongoClient> => {
+export const createMongoClientWithInMemoryDb = async () => {
   const mongoServer = new MongoMemoryServer();
   const uri = await mongoServer.getUri();
-  return createMongoClient(uri);
+  const client = await createMongoClient(uri);
+
+  return {
+    instance: () => client,
+    start: () => mongoServer.start(),
+    stop: () => mongoServer.stop(),
+  };
 };
 
-export const createApolloTestClient = (mongoClient: MongoClient, dataSources: DataSources) => {
-  const server = createApolloServer(mongoClient, dataSources);
+export const createApolloTestClient = (dataSources: DataSources) => {
+  const server = createApolloServer(dataSources);
   return createTestClient(server as any);
 };

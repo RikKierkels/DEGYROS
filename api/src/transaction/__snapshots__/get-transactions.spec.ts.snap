@@ -12,7 +12,7 @@ Object {
       },
       "count": 2,
       "exchange": "EPA",
-      "id": "5fa3135e0429c9a69d22f873",
+      "id": "03065814-a998-4876-8b6a-bafdeb26664e",
       "product": "HSBC MSCI WORLD",
       "purchaseDate": 2020-11-12T21:55:00.000Z,
       "purchaseValue": Object {
@@ -40,7 +40,7 @@ Object {
       },
       "count": 2,
       "exchange": "EAM",
-      "id": "5fa3135e0429c9a69d22f874",
+      "id": "29f09ed1-684c-4df3-8295-e12b7e8460d6",
       "product": "VANGUARD S&P500",
       "purchaseDate": 2020-12-31T09:55:00.000Z,
       "purchaseValue": Object {

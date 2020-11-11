@@ -2,22 +2,23 @@ import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
 import { Collection, FilterQuery, ObjectId } from 'mongodb';
 import DataLoader from 'dataloader';
-import { hasValue } from './util';
 import { EJSON } from 'bson';
+import { Context } from '../apollo';
 
+type Id = ObjectId | string;
 type MongoDataSourceConfig = {
-  timeToLive: number;
+  ttl: number;
 };
 
 const MINUTE_IN_MS = 60000;
 const DEFAULT_CONFIG: MongoDataSourceConfig = {
-  timeToLive: MINUTE_IN_MS,
+  ttl: MINUTE_IN_MS,
 };
 
-export class MongoDataSource<T extends { _id: ObjectId }> extends DataSource {
+export class MongoDataSource<T extends { _id: Id }> extends DataSource {
   private cache: KeyValueCache = new InMemoryLRUCache();
   private readonly config: MongoDataSourceConfig;
-  private loader: DataLoader<string, T>;
+  private loader: DataLoader<Id, T>;
 
   public collection: Collection<T>;
 
@@ -28,27 +29,33 @@ export class MongoDataSource<T extends { _id: ObjectId }> extends DataSource {
     this.collection = collection;
   }
 
-  initialize({ cache = this.cache }: DataSourceConfig<any>): void {
+  initialize({ cache = this.cache }: DataSourceConfig<Context>): void {
     this.cache = cache;
   }
 
-  // TODO: Get rid of cast to FilterQuery
-  createLoader(): DataLoader<string, T> {
-    return new DataLoader<string, T>((ids) => {
+  createLoader(): DataLoader<Id, T> {
+    return new DataLoader((ids) => {
       return this.collection
         .find({ _id: { $in: ids } } as FilterQuery<T>)
         .toArray()
-        .then(this.preserveLoaderOrder(ids));
+        .then(this.preserveOriginalOrder(ids));
     });
   }
 
-  private preserveLoaderOrder(ids: readonly string[]): (documents: T[]) => T[] {
+  private preserveOriginalOrder(ids: readonly Id[]): (documents: T[]) => T[] {
     return (documents) => {
-      return ids.map((id) => documents.find(({ _id }) => _id.equals(id))).filter(hasValue);
+      return ids.map((id) => {
+        const index = documents.findIndex(({ _id }) => this.idToString(_id) === this.idToString(id));
+        return documents[index];
+      });
     };
   }
 
-  async findOneById(id: string): Promise<T> {
+  private idToString(id: Id): string {
+    return id instanceof ObjectId ? id.toHexString() : id;
+  }
+
+  async findOneById(id: Id): Promise<T> {
     const key = this.createCacheKey(id);
 
     const documentFromCache = await this.cache.get(key);
@@ -57,25 +64,25 @@ export class MongoDataSource<T extends { _id: ObjectId }> extends DataSource {
     }
 
     const document = await this.loader.load(id);
-    const { timeToLive } = this.config;
-    if (timeToLive) {
-      this.cache.set(key, EJSON.stringify(document), { ttl: timeToLive });
+    const { ttl } = this.config;
+    if (document && ttl) {
+      this.cache.set(key, EJSON.stringify(document), { ttl });
     }
 
     return document;
   }
 
-  async findManyById(ids: string[]): Promise<T[]> {
-    return Promise.all(ids.map(this.findOneById));
+  private createCacheKey(id: Id): string {
+    return `mongo-${this.collection.collectionName}-${this.idToString(id)}`;
   }
 
-  async removeFromCacheById(id: string): Promise<void> {
+  async findManyById(ids: Id[]): Promise<T[]> {
+    return Promise.all(ids.map((id) => this.findOneById(id)));
+  }
+
+  async removeFromCacheById(id: Id): Promise<void> {
     const key = this.createCacheKey(id);
     this.loader.clear(id);
     await this.cache.delete(key);
-  }
-
-  private createCacheKey(id: string): string {
-    return `mongo-${this.collection.collectionName}-${id}`;
   }
 }

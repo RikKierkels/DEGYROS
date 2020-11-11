@@ -5,7 +5,7 @@ import { DIRECTIVES as typeDefsMongo } from '@graphql-codegen/typescript-mongodb
 import { loadFilesSync } from '@graphql-tools/load-files';
 import typeDefs from './schema';
 import { TransactionDbObject } from './generated/graphql';
-import { MongoDataSource } from './common/datasource-mongo';
+import { MongoDataSource } from './common/mongo-datasource';
 
 export type DataSources = {
   transaction: MongoDataSource<TransactionDbObject>;
@@ -23,11 +23,8 @@ export const createDataSources = (mongoClient: MongoClient): DataSources => {
   };
 };
 
-export const createApolloServer = (
-  mongoClient: MongoClient,
-  dataSources = createDataSources(mongoClient),
-): ApolloServer => {
-  const resolvers = loadFilesSync(join(__dirname, './**/*.resolvers.*'));
+export const createApolloServer = (dataSources: DataSources): ApolloServer => {
+  const resolvers = loadFilesSync(join(__dirname, './**/*-resolvers.*'));
   const schema = makeExecutableSchema({
     resolvers,
     typeDefs: [typeDefs, typeDefsMongo],

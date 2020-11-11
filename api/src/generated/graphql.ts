@@ -1,6 +1,8 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { FileUpload } from 'graphql-upload';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -8,8 +10,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  DateTime: any;
+  DateTime: Date;
+  Upload: { file: FileUpload };
 };
+
 
 
 
@@ -25,10 +29,19 @@ export type Query = {
   transactions?: Maybe<Array<Transaction>>;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  addTransactions?: Maybe<Array<Transaction>>;
+};
+
+
+export type MutationAddTransactionsArgs = {
+  file: Scalars['Upload'];
+};
+
 export type Transaction = {
   __typename?: 'Transaction';
   id: Scalars['ID'];
-  orderId: Scalars['String'];
   purchaseDate: Scalars['DateTime'];
   product: Scalars['String'];
   ISIN: Scalars['String'];
@@ -131,7 +144,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   Query: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<{}>;
   Transaction: ResolverTypeWrapper<TransactionDbObject>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -144,7 +159,9 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
+  Upload: Scalars['Upload'];
   Query: {};
+  Mutation: {};
   Transaction: TransactionDbObject;
   ID: Scalars['ID'];
   String: Scalars['String'];
@@ -193,13 +210,20 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   transactions?: Resolver<Maybe<Array<ResolversTypes['Transaction']>>, ParentType, ContextType>;
 };
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addTransactions?: Resolver<Maybe<Array<ResolversTypes['Transaction']>>, ParentType, ContextType, RequireFields<MutationAddTransactionsArgs, 'file'>>;
+};
+
 export type TransactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  orderId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   purchaseDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   product?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   ISIN?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -221,7 +245,9 @@ export type PriceResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
+  Upload?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Transaction?: TransactionResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
 };
@@ -249,10 +275,9 @@ export type DirectiveResolvers<ContextType = any> = {
  * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
  */
 export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;
-import { ObjectID } from 'mongodb';
+
 export type TransactionDbObject = {
-  _id: ObjectID,
-  orderId: string,
+  _id: string,
   purchaseDate: string,
   product: string,
   ISIN: string,

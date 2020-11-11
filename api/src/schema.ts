@@ -2,14 +2,18 @@ import { gql } from 'apollo-server';
 
 export default gql`
   scalar DateTime
+  scalar Upload
 
   type Query {
     transactions: [Transaction!]
   }
 
+  type Mutation {
+    addTransactions(file: Upload!): [Transaction!]
+  }
+
   type Transaction @entity {
     id: ID! @id
-    orderId: String! @column
     purchaseDate: DateTime! @column(overrideType: "string")
     product: String! @column
     ISIN: String! @column

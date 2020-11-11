@@ -8,6 +8,13 @@ generates:
       - "typescript"
       - "typescript-resolvers"
       - "typescript-mongodb"
+      - add:
+          content: "import { FileUpload } from 'graphql-upload';"
     config:
+      objectIdType: string
+      enumsAsTypes: true
       mappers:
         Transaction: "TransactionDbObject"
+      scalars:
+        DateTime: "Date"
+        Upload: "{ file: FileUpload }"
