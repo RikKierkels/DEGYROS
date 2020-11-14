@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`can retrieve transactions 1`] = `
+exports[`given existing transactions, when retrieving transactions, returns all transactions 1`] = `
 Object {
   "transactions": Array [
     Object {

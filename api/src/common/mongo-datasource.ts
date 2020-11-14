@@ -1,6 +1,6 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { Collection, FilterQuery, ObjectId } from 'mongodb';
+import { Collection, FilterQuery, ObjectId, OptionalId } from 'mongodb';
 import DataLoader from 'dataloader';
 import { EJSON } from 'bson';
 import { Context } from '../apollo';
@@ -55,6 +55,10 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
     return id instanceof ObjectId ? id.toHexString() : id;
   }
 
+  private createCacheKey(id: Id): string {
+    return `mongo-${this.collection.collectionName}-${this.idToString(id)}`;
+  }
+
   async findOneById(id: Id): Promise<T> {
     const key = this.createCacheKey(id);
 
@@ -72,12 +76,9 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
     return document;
   }
 
-  private createCacheKey(id: Id): string {
-    return `mongo-${this.collection.collectionName}-${this.idToString(id)}`;
-  }
-
   async findManyById(ids: Id[]): Promise<T[]> {
-    return Promise.all(ids.map((id) => this.findOneById(id)));
+    const documents = ids.map((id) => this.findOneById(id));
+    return Promise.all(documents).then((documents) => documents.filter((doc) => doc));
   }
 
   async removeFromCacheById(id: Id): Promise<void> {

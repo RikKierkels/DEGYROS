@@ -1,9 +1,18 @@
 import { gql } from 'apollo-server';
-import { createApolloTestClient, createMongoClientWithInMemoryDb } from '../common/test-utils';
+import { createApolloTestClient, createMongoMemoryClient, MongoMemoryClient } from '../common/test-utils';
 import { createDataSources } from '../apollo';
 
+let mongoClient: MongoMemoryClient;
+
+beforeEach(async () => {
+  mongoClient = await createMongoMemoryClient();
+});
+
+afterEach(async () => {
+  return mongoClient.stop();
+});
+
 test('given existing transactions, when retrieving transactions, returns all transactions', async () => {
-  const mongoClient = await createMongoClientWithInMemoryDb();
   const dataSources = createDataSources(mongoClient.instance());
   const { query } = createApolloTestClient(dataSources);
 
@@ -101,6 +110,4 @@ test('given existing transactions, when retrieving transactions, returns all tra
 
   expect(errors).toBeUndefined();
   expect(data).toMatchSnapshot();
-
-  await mongoClient.stop();
 });

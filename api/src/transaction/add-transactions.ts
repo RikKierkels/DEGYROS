@@ -88,7 +88,7 @@ const parseTransactionsCsv = (csv: string): TransactionCsvRow[] =>
   }).data;
 
 const isNotIncludedIn = (transactions: TransactionDbObject[]) => ({ orderId }: TransactionCsvRow): boolean =>
-  transactions.some((transaction) => transaction && transaction._id !== orderId);
+  transactions.every((transaction) => transaction._id !== orderId);
 
 const toTransactionDbObject = ({
   orderId,
@@ -125,10 +125,9 @@ const toDateIso = (date: string, time: string): string => {
 
 const toPrice = (amount: number = 0, currency: string = ''): Price => {
   const numberOfDecimals = getNumberOfDecimals(amount);
-  const amountAsWholeNumber = Math.round(amount * 10 ** numberOfDecimals);
 
   return {
-    amount: amountAsWholeNumber,
+    amount: toWholeNumber(amount, numberOfDecimals),
     currency,
     numberOfDecimals,
   };
@@ -138,3 +137,5 @@ const getNumberOfDecimals = (value: number): number => {
   const [, decimals] = value.toString().split('.');
   return (decimals || '').length;
 };
+
+const toWholeNumber = (value: number, numberOfDecimals: number): number => Math.round(value * 10 ** numberOfDecimals);

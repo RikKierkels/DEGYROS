@@ -1,9 +1,17 @@
-import { createApolloTestClient, createMongoClientWithInMemoryDb } from '../common/test-utils';
+import { createApolloTestClient, createMongoMemoryClient, MongoMemoryClient } from '../common/test-utils';
 import { createDataSources } from '../apollo';
 import { gql } from 'apollo-server';
 import { Readable } from 'stream';
 
-const createReadStream = (text: string): Readable => Readable.from(Buffer.from(text));
+let mongoClient: MongoMemoryClient;
+
+beforeEach(async () => {
+  mongoClient = await createMongoMemoryClient();
+});
+
+afterEach(async () => {
+  return mongoClient.stop();
+});
 
 const addTransactionsMutation = gql`
   fragment priceFields on Price {
@@ -36,8 +44,9 @@ const addTransactionsMutation = gql`
   }
 `;
 
+const createReadStream = (text: string): Readable => Readable.from(Buffer.from(text));
+
 test('given a file that is not a csv file, when adding transactions, throws an error', async () => {
-  const mongoClient = await createMongoClientWithInMemoryDb();
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
@@ -56,12 +65,9 @@ test('given a file that is not a csv file, when adding transactions, throws an e
   expect(errors).toHaveLength(1);
   expect(errors && errors[0].message).toContain('Invalid file type, should be text/csv');
   expect(data.addTransactions).toBeNull();
-
-  await mongoClient.stop();
 });
 
 test('given a valid transactions csv file, when adding transactions, adds the transactions and returns all transactions', async () => {
-  const mongoClient = await createMongoClientWithInMemoryDb();
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
@@ -85,12 +91,9 @@ test('given a valid transactions csv file, when adding transactions, adds the tr
 
   expect(errors).toBeUndefined();
   expect(data).toMatchSnapshot();
-
-  await mongoClient.stop();
 });
 
 test('given existing transactions, when adding transactions that already exist, only adds the transactions that dont exist', async () => {
-  const mongoClient = await createMongoClientWithInMemoryDb();
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
@@ -146,6 +149,4 @@ test('given existing transactions, when adding transactions that already exist, 
   expect(errors).toBeUndefined();
   expect(data.addTransactions).toHaveLength(2);
   expect(data).toMatchSnapshot();
-
-  await mongoClient.stop();
 });
