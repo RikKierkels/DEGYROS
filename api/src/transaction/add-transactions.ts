@@ -1,11 +1,12 @@
 import { FileUpload } from 'graphql-upload';
 import { DataSources } from '../apollo';
-import { parse } from 'papaparse';
 import parseDate from 'date-fns/parse';
 import { Price, TransactionDbObject } from '../generated/graphql';
-import { ReadStream } from 'fs-capacitor';
+import { parseCsv } from '../common/csv-parser';
+import { UserInputError } from 'apollo-server';
+import { mapStreamTo } from '../common/utils';
 
-type TransactionCsvRow = {
+type TransactionCsv = {
   date: string;
   time: string;
   product: string;
@@ -26,69 +27,62 @@ type TransactionCsvRow = {
   orderId: string;
 };
 
-export const handleAddTransactions = async (
-  file: FileUpload,
-  transactions: DataSources['transaction'],
-): Promise<TransactionDbObject[]> => {
+const parseTransactions = parseCsv<TransactionCsv>(
+  [
+    'date',
+    'time',
+    'product',
+    'ISIN',
+    'exchange',
+    'count',
+    'rateCurrency',
+    'rate',
+    'localValueCurrency',
+    'localValue',
+    'purchaseValueCurrency',
+    'purchaseValue',
+    'exchangeRate',
+    'costsCurrency',
+    'costs',
+    'totalCurrency',
+    'total',
+    'orderId',
+  ],
+  (value) => (value ? value : undefined),
+);
+const parseTransactionsFromStream = mapStreamTo(parseTransactions);
+
+export const handleAddTransactions = async (file: FileUpload, transactionsDb: DataSources['transactionsDb']) => {
   const { mimetype, createReadStream } = file;
 
   if (mimetype !== 'text/csv') {
-    throw Error('Invalid file type, should be text/csv');
+    throw new UserInputError('Invalid file type. Only text/csv is supported.');
   }
 
-  const fileStream = createReadStream();
-  const csv = await readableToString(fileStream);
-  const transactionCsvRows = parseTransactionsCsv(csv);
+  const { data: transactionsInCsv, errors } = await parseTransactionsFromStream(createReadStream());
+  if (errors.length) {
+    throw new UserInputError(
+      'Invalid CSV file input',
+      errors.reduce((props, error) => (props[error.row] = error.message), Object.create(null)),
+    );
+  }
 
-  const existingTransactions = await transactions.findManyById(transactionCsvRows.map(({ orderId }) => orderId));
-  const transactionsToAdd = transactionCsvRows.filter(isNotIncludedIn(existingTransactions)).map(toTransactionDbObject);
-  await transactions.collection.insertMany(transactionsToAdd);
+  const transactionsInDb = await transactionsDb.findManyById(transactionsInCsv.map(({ orderId }) => orderId));
+  const transactionsToAdd = transactionsInCsv
+    .filter(isTransactionUnique)
+    .filter(isTransactionNotIncludedIn(transactionsInDb))
+    .map(toTransactionDbObject);
 
-  return transactions.collection.find().toArray();
+  return transactionsToAdd.length
+    ? transactionsDb.collection.insertMany(transactionsToAdd).then(() => transactionsDb.collection.find().toArray())
+    : transactionsDb.collection.find().toArray();
 };
 
-const readableToString = (readable: ReadStream): Promise<string> =>
-  new Promise((resolve, reject) => {
-    let data = '';
-    readable.on('data', (chunk) => (data += chunk));
-    readable.on('end', () => resolve(data));
-    readable.on('error', (error) => reject(error));
-  });
+const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]) =>
+  self.findIndex(({ orderId }) => transaction.orderId === orderId) === index;
 
-const parseTransactionsCsv = (csv: string): TransactionCsvRow[] =>
-  parse<TransactionCsvRow>(csv, {
-    header: true,
-    dynamicTyping: true,
-    skipEmptyLines: true,
-    transform(value: string): any {
-      return value ? value : undefined;
-    },
-    transformHeader(_, index: number): string {
-      return [
-        'date',
-        'time',
-        'product',
-        'ISIN',
-        'exchange',
-        'count',
-        'rateCurrency',
-        'rate',
-        'localValueCurrency',
-        'localValue',
-        'purchaseValueCurrency',
-        'purchaseValue',
-        'exchangeRate',
-        'costsCurrency',
-        'costs',
-        'totalCurrency',
-        'total',
-        'orderId',
-      ][index];
-    },
-  }).data;
-
-const isNotIncludedIn = (transactions: TransactionDbObject[]) => ({ orderId }: TransactionCsvRow): boolean =>
-  transactions.every((transaction) => transaction._id !== orderId);
+const isTransactionNotIncludedIn = (transactions: TransactionDbObject[]) => (transaction: TransactionCsv) =>
+  transactions.findIndex(({ _id }) => transaction.orderId === _id) === -1;
 
 const toTransactionDbObject = ({
   orderId,
@@ -106,7 +100,7 @@ const toTransactionDbObject = ({
   costsCurrency,
   total,
   totalCurrency,
-}: TransactionCsvRow): TransactionDbObject => ({
+}: TransactionCsv): TransactionDbObject => ({
   _id: orderId,
   purchaseDate: toDateIso(date, time),
   product,
@@ -119,7 +113,7 @@ const toTransactionDbObject = ({
   total: toPrice(total, totalCurrency),
 });
 
-const toDateIso = (date: string, time: string): string => {
+const toDateIso = (date: string, time: string) => {
   return parseDate(`${date} ${time}`, 'dd-MM-yyyy HH:mm', new Date()).toISOString();
 };
 
@@ -133,9 +127,9 @@ const toPrice = (amount: number = 0, currency: string = ''): Price => {
   };
 };
 
-const getNumberOfDecimals = (value: number): number => {
+const getNumberOfDecimals = (value: number) => {
   const [, decimals] = value.toString().split('.');
   return (decimals || '').length;
 };
 
-const toWholeNumber = (value: number, numberOfDecimals: number): number => Math.round(value * 10 ** numberOfDecimals);
+const toWholeNumber = (value: number, numberOfDecimals: number) => Math.round(value * 10 ** numberOfDecimals);

@@ -16,7 +16,7 @@ test('given existing transactions, when retrieving transactions, returns all tra
   const dataSources = createDataSources(mongoClient.instance());
   const { query } = createApolloTestClient(dataSources);
 
-  await dataSources.transaction.collection.insertMany([
+  await dataSources.transactionsDb.collection.insertMany([
     {
       _id: '03065814-a998-4876-8b6a-bafdeb26664e',
       purchaseDate: '2020-11-12T21:55:00.000Z',

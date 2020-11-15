@@ -8,7 +8,7 @@ import { TransactionDbObject } from './generated/graphql';
 import { MongoDataSource } from './common/mongo-datasource';
 
 export type DataSources = {
-  transaction: MongoDataSource<TransactionDbObject>;
+  transactionsDb: MongoDataSource<TransactionDbObject>;
 };
 
 export type Context = {
@@ -19,7 +19,7 @@ export const createDataSources = (mongoClient: MongoClient): DataSources => {
   const collection = (name: string) => mongoClient.db().collection(name);
 
   return {
-    transaction: new MongoDataSource<TransactionDbObject>(collection('transactions')),
+    transactionsDb: new MongoDataSource<TransactionDbObject>(collection('transactions')),
   };
 };
 

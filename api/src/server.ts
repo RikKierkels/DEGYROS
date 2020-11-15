@@ -7,6 +7,7 @@ import { environment } from './environment/environment';
 (async () => {
   const mongoClient = await createMongoClient(environment.mongo.uri);
   const dataSources = createDataSources(mongoClient);
+
   createApolloServer(dataSources)
     .listen()
     .then(({ url }) => console.log(`🚀  Server ready at ${url}`));

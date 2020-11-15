@@ -1,6 +1,6 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { Collection, FilterQuery, ObjectId, OptionalId } from 'mongodb';
+import { Collection, FilterQuery, ObjectId } from 'mongodb';
 import DataLoader from 'dataloader';
 import { EJSON } from 'bson';
 import { Context } from '../apollo';

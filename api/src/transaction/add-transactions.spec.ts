@@ -63,7 +63,7 @@ test('given a file that is not a csv file, when adding transactions, throws an e
   });
 
   expect(errors).toHaveLength(1);
-  expect(errors && errors[0].message).toContain('Invalid file type, should be text/csv');
+  expect(errors && errors[0].message).toMatch(/invalid file type/i);
   expect(data.addTransactions).toBeNull();
 });
 
@@ -97,7 +97,7 @@ test('given existing transactions, when adding transactions that already exist, 
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
-  await dataSources.transaction.collection.insertOne({
+  await dataSources.transactionsDb.collection.insertOne({
     _id: '03065814-a998-4876-8b6a-bafdeb26664e',
     purchaseDate: '2020-11-12T21:55:00.000Z',
     product: 'HSBC MSCI WORLD',
@@ -126,7 +126,7 @@ test('given existing transactions, when adding transactions that already exist, 
     },
   });
 
-  const savedTransactionsCount = await dataSources.transaction.collection.countDocuments();
+  const savedTransactionsCount = await dataSources.transactionsDb.collection.countDocuments();
   expect(savedTransactionsCount).toBe(1);
 
   const csv =
