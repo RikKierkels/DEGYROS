@@ -1,4 +1,4 @@
-import { createTestClient } from 'apollo-server-testing';
+import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApolloServer, DataSources } from '../apollo';
 import { createMongoClient } from '../mongo';
@@ -20,7 +20,7 @@ export const createMongoMemoryClient = async (): Promise<MongoMemoryClient> => {
   };
 };
 
-export const createApolloTestClient = (dataSources: DataSources) => {
+export const createApolloTestClient = (dataSources: DataSources): ApolloServerTestClient => {
   const server = createApolloServer(dataSources);
   return createTestClient(server as any);
 };

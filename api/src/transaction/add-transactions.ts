@@ -5,6 +5,7 @@ import { DataSources } from '../apollo';
 import { mapStreamTo } from '../common/utils';
 import { parseCsv } from '../common/csv-parser';
 import { Price, TransactionDbObject } from '../generated/graphql';
+import { ParseError } from 'papaparse';
 
 type TransactionCsv = {
   date: string;
@@ -52,36 +53,37 @@ const parseTransactions = parseCsv<TransactionCsv>(
 );
 const parseTransactionsFromStream = mapStreamTo(parseTransactions);
 
-export const handleAddTransactions = async (file: FileUpload, transactionsDb: DataSources['transactionsDb']) => {
+export const handleAddTransactions = async (
+  file: FileUpload,
+  transactionsDb: DataSources['transactionsDb'],
+): Promise<TransactionDbObject[]> => {
   const { mimetype, createReadStream } = file;
 
   if (mimetype !== 'text/csv') {
     throw new UserInputError('Invalid file type. Only text/csv is supported.');
   }
 
-  const { data: transactionsInCsv, errors } = await parseTransactionsFromStream(createReadStream());
+  const { data: transactionsFromCsv, errors } = await parseTransactionsFromStream(createReadStream());
   if (errors.length) {
-    throw new UserInputError(
-      'Invalid CSV file input',
-      errors.reduce((props, error) => (props[error.row] = error.message), Object.create(null)),
-    );
+    throw new UserInputError('Invalid CSV file input', toErrorMessageByRow(errors));
   }
 
-  const transactionsInDb = await transactionsDb.findManyById(transactionsInCsv.map(({ orderId }) => orderId));
-  const transactionsToAdd = transactionsInCsv
+  const transactionsFromDb = await transactionsDb.findManyById(transactionsFromCsv.map(({ orderId }) => orderId));
+  const transactionsToAdd = transactionsFromCsv
     .filter(isTransactionUnique)
-    .filter(isTransactionNotIncludedIn(transactionsInDb))
+    .filter(isTransactionNotIncludedIn(transactionsFromDb))
     .map(toTransactionDbObject);
 
-  return transactionsToAdd.length
-    ? transactionsDb.collection.insertMany(transactionsToAdd).then(() => transactionsDb.collection.find().toArray())
-    : transactionsDb.collection.find().toArray();
+  return transactionsDb.insertManySafe(transactionsToAdd).then(() => transactionsDb.collection.find().toArray());
 };
 
-const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]) =>
+const toErrorMessageByRow = (errors: ParseError[]): Record<string, string> =>
+  errors.reduce((props, error) => (props[error.row] = error.message), Object.create(null));
+
+const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]): boolean =>
   self.findIndex(({ orderId }) => transaction.orderId === orderId) === index;
 
-const isTransactionNotIncludedIn = (transactions: TransactionDbObject[]) => (transaction: TransactionCsv) =>
+const isTransactionNotIncludedIn = (transactions: TransactionDbObject[]) => (transaction: TransactionCsv): boolean =>
   transactions.findIndex(({ _id }) => transaction.orderId === _id) === -1;
 
 const toTransactionDbObject = ({
@@ -102,7 +104,7 @@ const toTransactionDbObject = ({
   totalCurrency,
 }: TransactionCsv): TransactionDbObject => ({
   _id: orderId,
-  purchaseDate: toDateIso(date, time),
+  purchaseDate: parseToISODate(date, time),
   product,
   ISIN,
   exchange,
@@ -113,7 +115,7 @@ const toTransactionDbObject = ({
   total: toPrice(total, totalCurrency),
 });
 
-const toDateIso = (date: string, time: string) => {
+const parseToISODate = (date: string, time: string): string => {
   return parse(`${date} ${time}`, 'dd-MM-yyyy HH:mm', new Date()).toISOString();
 };
 
@@ -127,9 +129,9 @@ const toPrice = (amount: number = 0, currency: string = ''): Price => {
   };
 };
 
-const getNumberOfDecimals = (value: number) => {
+const getNumberOfDecimals = (value: number): number => {
   const [, decimals] = value.toString().split('.');
   return (decimals || '').length;
 };
 
-const toWholeNumber = (value: number, numberOfDecimals: number) => Math.round(value * 10 ** numberOfDecimals);
+const toWholeNumber = (value: number, numberOfDecimals: number): number => Math.round(value * 10 ** numberOfDecimals);

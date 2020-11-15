@@ -1,18 +1,23 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
-import { Collection, FilterQuery, ObjectId } from 'mongodb';
+import {
+  Collection,
+  CollectionInsertManyOptions,
+  FilterQuery,
+  InsertWriteOpResult,
+  ObjectId,
+  OptionalId,
+  WithId,
+} from 'mongodb';
 import DataLoader from 'dataloader';
 import { EJSON } from 'bson';
 import { Context } from '../apollo';
 
+const MINUTE_IN_MS = 60000;
+
 type Id = ObjectId | string;
 type MongoDataSourceConfig = {
   ttl: number;
-};
-
-const MINUTE_IN_MS = 60000;
-const DEFAULT_CONFIG: MongoDataSourceConfig = {
-  ttl: MINUTE_IN_MS,
 };
 
 export class MongoDataSource<T extends { _id: Id }> extends DataSource {
@@ -22,14 +27,14 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
 
   public collection: Collection<T>;
 
-  constructor(collection: Collection<T>, config: MongoDataSourceConfig = DEFAULT_CONFIG) {
+  constructor(collection: Collection<T>, config: MongoDataSourceConfig = { ttl: MINUTE_IN_MS }) {
     super();
     this.config = config;
     this.loader = this.createLoader();
     this.collection = collection;
   }
 
-  initialize({ cache = this.cache }: DataSourceConfig<Context>): void {
+  initialize({ cache = this.cache }: DataSourceConfig<Context>) {
     this.cache = cache;
   }
 
@@ -81,9 +86,16 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
     return Promise.all(documents).then((documents) => documents.filter((doc) => doc));
   }
 
-  async removeFromCacheById(id: Id): Promise<void> {
+  async insertManySafe(
+    docs: OptionalId<T>[],
+    options?: CollectionInsertManyOptions,
+  ): Promise<InsertWriteOpResult<WithId<T>> | null> {
+    return docs.length ? this.collection.insertMany(docs, options) : null;
+  }
+
+  async removeFromCacheById(id: Id): Promise<boolean | void> {
     const key = this.createCacheKey(id);
     this.loader.clear(id);
-    await this.cache.delete(key);
+    return this.cache.delete(key);
   }
 }

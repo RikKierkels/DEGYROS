@@ -1,6 +1,6 @@
-import { parse } from 'papaparse';
+import { parse, ParseResult } from 'papaparse';
 
-export const parseCsv = <T>(headers: string[], transform: (value: string) => any) => (text: string) =>
+export const parseCsv = <T>(headers: string[], transform: (value: string) => any) => (text: string): ParseResult<T> =>
   parse<T>(text, {
     header: true,
     dynamicTyping: true,
