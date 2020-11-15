@@ -67,7 +67,76 @@ test('given a file that is not a csv file, when adding transactions, throws an e
   expect(data.addTransactions).toBeNull();
 });
 
-test('given a valid transactions csv file, when adding transactions, adds the transactions and returns all transactions', async () => {
+test('given an empty csv file, when adding transactions, throws an error', async () => {
+  const dataSources = createDataSources(mongoClient.instance());
+  const { mutate } = createApolloTestClient(dataSources);
+
+  const { data, errors } = await mutate({
+    mutation: addTransactionsMutation,
+    variables: {
+      file: {
+        file: {
+          mimetype: 'text/csv',
+          createReadStream: () => createReadStream(''),
+        },
+      },
+    },
+  });
+
+  expect(errors).toHaveLength(1);
+  expect(errors && errors[0].message).toMatch(/invalid csv file/i);
+  expect(data.addTransactions).toBeNull();
+});
+
+test('given a faulty csv file, when adding transactions, throws an error', async () => {
+  const dataSources = createDataSources(mongoClient.instance());
+  const { mutate } = createApolloTestClient(dataSources);
+
+  const csv =
+    'Datum,Tijd,Product,ISIN,Exchange,Aantal,,Koers,,Lokale waarde,,Waarde,Wisselkoers,,Kosten,,Totaal,Order Id\n' +
+    'HSBC MSCI WORLD,IE00B4X9L533,EPA,2,EUR,-40.68,,,,EUR,-40.68,03065814-a998-4876-8b6a-bafdeb26664e';
+
+  const { data, errors } = await mutate({
+    mutation: addTransactionsMutation,
+    variables: {
+      file: {
+        file: {
+          mimetype: 'text/csv',
+          createReadStream: () => createReadStream(csv),
+        },
+      },
+    },
+  });
+
+  expect(errors).toHaveLength(1);
+  expect(errors && errors[0].message).toMatch(/invalid csv file/i);
+  expect(data.addTransactions).toBeNull();
+});
+
+test('given a valid csv file without transactions, when adding transactions, returns all transactions', async () => {
+  const dataSources = createDataSources(mongoClient.instance());
+  const { mutate } = createApolloTestClient(dataSources);
+
+  const csv =
+    'Datum,Tijd,Product,ISIN,Exchange,Aantal,,Koers,,Lokale waarde,,Waarde,Wisselkoers,,Kosten,,Totaal,Order Id';
+
+  const { data, errors } = await mutate({
+    mutation: addTransactionsMutation,
+    variables: {
+      file: {
+        file: {
+          mimetype: 'text/csv',
+          createReadStream: () => createReadStream(csv),
+        },
+      },
+    },
+  });
+
+  expect(errors).toBeUndefined();
+  expect(data).toMatchSnapshot();
+});
+
+test('given a valid csv file, when adding transactions, adds the transactions and returns all transactions', async () => {
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 

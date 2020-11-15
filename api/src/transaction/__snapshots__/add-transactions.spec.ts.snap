@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`given a valid csv file without transactions, when adding transactions, returns all transactions 1`] = `
+Object {
+  "addTransactions": Array [],
+}
+`;
+
 exports[`given a valid transactions csv file, when adding transactions, adds the transactions and returns all transactions 1`] = `
 Object {
   "addTransactions": Array [

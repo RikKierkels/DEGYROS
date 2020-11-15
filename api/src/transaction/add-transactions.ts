@@ -65,7 +65,7 @@ export const handleAddTransactions = async (
 
   const { data: transactionsFromCsv, errors } = await parseTransactionsFromStream(createReadStream());
   if (errors.length) {
-    throw new UserInputError('Invalid CSV file input', toErrorMessageByRow(errors));
+    throw new UserInputError('Invalid csv file', toErrorMessageByCode(errors));
   }
 
   const transactionsFromDb = await transactionsDb.findManyById(transactionsFromCsv.map(({ orderId }) => orderId));
@@ -77,8 +77,11 @@ export const handleAddTransactions = async (
   return transactionsDb.insertManySafe(transactionsToAdd).then(() => transactionsDb.collection.find().toArray());
 };
 
-const toErrorMessageByRow = (errors: ParseError[]): Record<string, string> =>
-  errors.reduce((props, error) => (props[error.row] = error.message), Object.create(null));
+const toErrorMessageByCode = (errors: ParseError[]): Record<string, string> =>
+  errors.reduce(
+    (props, { code, row, message }) => ((props[code] = `${message} on row: ${row}`), props),
+    Object.create(null),
+  );
 
 const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]): boolean =>
   self.findIndex(({ orderId }) => transaction.orderId === orderId) === index;
