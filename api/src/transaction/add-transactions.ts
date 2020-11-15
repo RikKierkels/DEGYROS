@@ -1,10 +1,10 @@
-import { FileUpload } from 'graphql-upload';
-import { DataSources } from '../apollo';
-import parseDate from 'date-fns/parse';
-import { Price, TransactionDbObject } from '../generated/graphql';
-import { parseCsv } from '../common/csv-parser';
 import { UserInputError } from 'apollo-server';
+import { FileUpload } from 'graphql-upload';
+import parse from 'date-fns/parse';
+import { DataSources } from '../apollo';
 import { mapStreamTo } from '../common/utils';
+import { parseCsv } from '../common/csv-parser';
+import { Price, TransactionDbObject } from '../generated/graphql';
 
 type TransactionCsv = {
   date: string;
@@ -114,7 +114,7 @@ const toTransactionDbObject = ({
 });
 
 const toDateIso = (date: string, time: string) => {
-  return parseDate(`${date} ${time}`, 'dd-MM-yyyy HH:mm', new Date()).toISOString();
+  return parse(`${date} ${time}`, 'dd-MM-yyyy HH:mm', new Date()).toISOString();
 };
 
 const toPrice = (amount: number = 0, currency: string = ''): Price => {
