@@ -3,9 +3,8 @@ import { FileUpload } from 'graphql-upload';
 import parse from 'date-fns/parse';
 import { DataSources } from '../apollo';
 import { mapStreamTo } from '../common/utils';
-import { parseCsv } from '../common/csv-parser';
+import { formatErrorMessagesByCode, parseCsv } from '../common/csv-parser';
 import { Price, TransactionDbObject } from '../generated/graphql';
-import { ParseError } from 'papaparse';
 
 type TransactionCsv = {
   date: string;
@@ -65,28 +64,22 @@ export const handleAddTransactions = async (
 
   const { data: transactionsFromCsv, errors } = await parseTransactionsFromStream(createReadStream());
   if (errors.length) {
-    throw new UserInputError('Invalid csv file', toErrorMessageByCode(errors));
+    throw new UserInputError('Invalid csv file', formatErrorMessagesByCode(errors));
   }
 
   const transactionsFromDb = await transactionsDb.findManyById(transactionsFromCsv.map(({ orderId }) => orderId));
   const transactionsToAdd = transactionsFromCsv
     .filter(isTransactionUnique)
-    .filter(isTransactionNotIncludedIn(transactionsFromDb))
+    .filter(isTransactionMissingFrom(transactionsFromDb))
     .map(toTransactionDbObject);
 
   return transactionsDb.insertManySafe(transactionsToAdd).then(() => transactionsDb.collection.find().toArray());
 };
 
-const toErrorMessageByCode = (errors: ParseError[]): Record<string, string> =>
-  errors.reduce(
-    (props, { code, row, message }) => ((props[code] = `${message} on row: ${row}`), props),
-    Object.create(null),
-  );
-
 const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]): boolean =>
   self.findIndex(({ orderId }) => transaction.orderId === orderId) === index;
 
-const isTransactionNotIncludedIn = (transactions: TransactionDbObject[]) => (transaction: TransactionCsv): boolean =>
+const isTransactionMissingFrom = (transactions: TransactionDbObject[]) => (transaction: TransactionCsv): boolean =>
   transactions.findIndex(({ _id }) => transaction.orderId === _id) === -1;
 
 const toTransactionDbObject = ({

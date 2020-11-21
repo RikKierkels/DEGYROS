@@ -1,4 +1,4 @@
-import { parse, ParseResult } from 'papaparse';
+import { parse, ParseError, ParseResult } from 'papaparse';
 
 export const parseCsv = <T>(headers: string[], transform: (value: string) => any) => (text: string): ParseResult<T> =>
   parse<T>(text, {
@@ -10,3 +10,9 @@ export const parseCsv = <T>(headers: string[], transform: (value: string) => any
       return headers[index];
     },
   });
+
+export const formatErrorMessagesByCode = (errors: ParseError[]): Record<string, string> =>
+  errors.reduce(
+    (props, { code, row, message }) => ((props[code] = `${message} on row: ${row}`), props),
+    Object.create(null),
+  );
