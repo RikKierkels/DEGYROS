@@ -113,7 +113,7 @@ test('given a faulty csv file, when adding transactions, throws an error', async
   expect(data.addTransactions).toBeNull();
 });
 
-test('given a valid csv file without transactions, when adding transactions, returns all transactions', async () => {
+test('given a valid csv file without transactions, when adding transactions, returns an empty array', async () => {
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
@@ -133,10 +133,10 @@ test('given a valid csv file without transactions, when adding transactions, ret
   });
 
   expect(errors).toBeUndefined();
-  expect(data).toMatchSnapshot();
+  expect(data.addTransactions).toEqual([]);
 });
 
-test('given a valid csv file, when adding transactions, adds the transactions and returns all transactions', async () => {
+test('given a valid csv file, when adding transactions, adds the transactions and returns the added transactions', async () => {
   const dataSources = createDataSources(mongoClient.instance());
   const { mutate } = createApolloTestClient(dataSources);
 
@@ -216,6 +216,6 @@ test('given existing transactions, when adding transactions that already exist, 
   });
 
   expect(errors).toBeUndefined();
-  expect(data.addTransactions).toHaveLength(2);
+  expect(data.addTransactions).toHaveLength(1);
   expect(data).toMatchSnapshot();
 });

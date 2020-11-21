@@ -1,12 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`given a valid csv file without transactions, when adding transactions, returns all transactions 1`] = `
-Object {
-  "addTransactions": Array [],
-}
-`;
-
-exports[`given a valid transactions csv file, when adding transactions, adds the transactions and returns all transactions 1`] = `
+exports[`given a valid csv file, when adding transactions, adds the transactions and returns the added transactions 1`] = `
 Object {
   "addTransactions": Array [
     Object {
@@ -100,34 +94,6 @@ Object {
 exports[`given existing transactions, when adding transactions that already exist, only adds the transactions that dont exist 1`] = `
 Object {
   "addTransactions": Array [
-    Object {
-      "ISIN": "IE00B4X9L533",
-      "costs": Object {
-        "amount": 0,
-        "currency": "EUR",
-        "numberOfDecimals": 2,
-      },
-      "count": 2,
-      "exchange": "EPA",
-      "id": "03065814-a998-4876-8b6a-bafdeb26664e",
-      "product": "HSBC MSCI WORLD",
-      "purchaseDate": 2020-11-12T21:55:00.000Z,
-      "purchaseValue": Object {
-        "amount": 4068,
-        "currency": "EUR",
-        "numberOfDecimals": 2,
-      },
-      "rate": Object {
-        "amount": 20339,
-        "currency": "EUR",
-        "numberOfDecimals": 3,
-      },
-      "total": Object {
-        "amount": 4068,
-        "currency": "EUR",
-        "numberOfDecimals": 2,
-      },
-    },
     Object {
       "ISIN": "IE00B3XXRP09",
       "costs": Object {

@@ -73,7 +73,7 @@ export const handleAddTransactions = async (
     .filter(isTransactionMissingFrom(transactionsFromDb))
     .map(toTransactionDbObject);
 
-  return transactionsDb.insertManySafe(transactionsToAdd).then(() => transactionsDb.collection.find().toArray());
+  return transactionsDb.insertManySafe(transactionsToAdd).then((result) => result?.ops || []);
 };
 
 const isTransactionUnique = (transaction: TransactionCsv, index: number, self: TransactionCsv[]): boolean =>
