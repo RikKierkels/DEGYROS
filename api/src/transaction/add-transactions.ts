@@ -1,7 +1,7 @@
 import { UserInputError } from 'apollo-server';
 import { FileUpload } from 'graphql-upload';
 import parse from 'date-fns/parse';
-import { DataSources } from '../apollo';
+import { TransactionsDb } from '../apollo';
 import { mapStreamTo } from '../common/utils';
 import { formatErrorMessagesByCode, parseCsv } from '../common/csv-parser';
 import { Price, TransactionDbObject } from '../generated/graphql';
@@ -54,7 +54,7 @@ const parseTransactionsFromStream = mapStreamTo(parseTransactions);
 
 export const handleAddTransactions = async (
   file: FileUpload,
-  transactionsDb: DataSources['transactionsDb'],
+  transactionsDb: TransactionsDb,
 ): Promise<TransactionDbObject[]> => {
   const { mimetype, createReadStream } = file;
 

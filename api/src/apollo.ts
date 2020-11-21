@@ -7,8 +7,9 @@ import typeDefs from './schema';
 import { TransactionDbObject } from './generated/graphql';
 import { MongoDataSource } from './common/mongo-datasource';
 
+export type TransactionsDb = MongoDataSource<TransactionDbObject>;
 export type DataSources = {
-  transactionsDb: MongoDataSource<TransactionDbObject>;
+  transactionsDb: TransactionsDb;
 };
 
 export type Context = {

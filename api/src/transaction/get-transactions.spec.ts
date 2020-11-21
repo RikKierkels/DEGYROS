@@ -12,39 +12,11 @@ afterEach(async () => {
   return mongoClient.stop();
 });
 
-test('given existing transactions, when retrieving transactions, returns all transactions', async () => {
+test('given existing transactions, when retrieving transactions, returns all transactions sorted by date', async () => {
   const dataSources = createDataSources(mongoClient.instance());
   const { query } = createApolloTestClient(dataSources);
 
   await dataSources.transactionsDb.collection.insertMany([
-    {
-      _id: '03065814-a998-4876-8b6a-bafdeb26664e',
-      purchaseDate: '2020-11-12T21:55:00.000Z',
-      product: 'HSBC MSCI WORLD',
-      ISIN: 'IE00B4X9L533',
-      exchange: 'EPA',
-      count: 2,
-      rate: {
-        amount: 20339,
-        numberOfDecimals: 3,
-        currency: 'EUR',
-      },
-      purchaseValue: {
-        amount: 4068,
-        numberOfDecimals: 2,
-        currency: 'EUR',
-      },
-      costs: {
-        amount: 0,
-        numberOfDecimals: 2,
-        currency: 'EUR',
-      },
-      total: {
-        amount: 4068,
-        numberOfDecimals: 2,
-        currency: 'EUR',
-      },
-    },
     {
       _id: '29f09ed1-684c-4df3-8295-e12b7e8460d6',
       purchaseDate: '2020-12-31T09:55:00.000Z',
@@ -69,6 +41,34 @@ test('given existing transactions, when retrieving transactions, returns all tra
       },
       total: {
         amount: 10996,
+        numberOfDecimals: 2,
+        currency: 'EUR',
+      },
+    },
+    {
+      _id: '03065814-a998-4876-8b6a-bafdeb26664e',
+      purchaseDate: '2020-11-12T21:55:00.000Z',
+      product: 'HSBC MSCI WORLD',
+      ISIN: 'IE00B4X9L533',
+      exchange: 'EPA',
+      count: 2,
+      rate: {
+        amount: 20339,
+        numberOfDecimals: 3,
+        currency: 'EUR',
+      },
+      purchaseValue: {
+        amount: 4068,
+        numberOfDecimals: 2,
+        currency: 'EUR',
+      },
+      costs: {
+        amount: 0,
+        numberOfDecimals: 2,
+        currency: 'EUR',
+      },
+      total: {
+        amount: 4068,
         numberOfDecimals: 2,
         currency: 'EUR',
       },
