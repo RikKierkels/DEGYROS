@@ -1,16 +1,16 @@
 import { PageInput, ResolversParentTypes } from '../generated/graphql';
 
 type Pageables<T> = { [K in keyof T]: T[K] extends { items: unknown } ? T[K] : never }[keyof T];
-type PageableItem<T> = T extends { items: infer Items } ? (Items extends Array<infer Item> ? Item : never) : never;
+type PageableItems<T> = T extends { items: infer Items } ? (Items extends Array<infer Item> ? Item : never) : never;
 
-type PageableResolverType = Pageables<ResolversParentTypes>;
-type PageableResolverItem = PageableItem<PageableResolverType>;
+type PageableResolverTypes = Pageables<ResolversParentTypes>;
+type PageableResolverItems = PageableItems<PageableResolverTypes>;
 
-const paginated = <T extends PageableResolverItem>(
-  items: T[],
+const paginated = <Item extends PageableResolverItems>(
+  items: Item[],
   page: PageInput,
   total: number,
-): PageableResolverType => ({
+): PageableResolverTypes => ({
   items,
   total,
   count: items.length,
