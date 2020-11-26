@@ -5,11 +5,12 @@ import { handleGetTransactions } from './get-transactions';
 
 const resolvers: Resolvers<Context> = {
   Query: {
-    transactions: async (_, __, { dataSources: { transactionsDb } }) => handleGetTransactions(transactionsDb),
+    transactions: async (_, { page }, { dataSources: { transactionsDb } }) =>
+      handleGetTransactions(transactionsDb, page),
   },
   Mutation: {
     addTransactions: async (_, { file: { file } }, { dataSources: { transactionsDb } }) =>
-      handleAddTransactions(file, transactionsDb),
+      handleAddTransactions(transactionsDb, file),
   },
   Transaction: {
     id: ({ _id }) => _id,

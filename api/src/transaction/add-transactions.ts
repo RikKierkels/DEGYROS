@@ -53,8 +53,8 @@ const parseTransactions = parseCsv<TransactionCsv>(
 const parseTransactionsFromStream = mapStreamTo(parseTransactions);
 
 export const handleAddTransactions = async (
-  file: FileUpload,
   transactionsDb: TransactionsDb,
+  file: FileUpload,
 ): Promise<TransactionDbObject[]> => {
   const { mimetype, createReadStream } = file;
 

@@ -2,6 +2,7 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 import { FileUpload } from 'graphql-upload';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -26,17 +27,46 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  transactions?: Maybe<Array<Transaction>>;
+  transactions: TransactionPage;
+};
+
+
+export type QueryTransactionsArgs = {
+  page?: Maybe<PageInput>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addTransactions?: Maybe<Array<Transaction>>;
+  addTransactions: Array<Transaction>;
 };
 
 
 export type MutationAddTransactionsArgs = {
   file: Scalars['Upload'];
+};
+
+export type PageInput = {
+  size: Scalars['Int'];
+  offset: Scalars['Int'];
+};
+
+export type Page = {
+  items: Array<PageItem>;
+  size: Scalars['Int'];
+  offset: Scalars['Int'];
+  count: Scalars['Int'];
+  total: Scalars['Int'];
+};
+
+export type PageItem = Transaction;
+
+export type TransactionPage = Page & {
+  __typename?: 'TransactionPage';
+  items: Array<Transaction>;
+  size: Scalars['Int'];
+  offset: Scalars['Int'];
+  count: Scalars['Int'];
+  total: Scalars['Int'];
 };
 
 export type Transaction = {
@@ -147,10 +177,14 @@ export type ResolversTypes = {
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
+  PageInput: PageInput;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Page: ResolversTypes['TransactionPage'];
+  PageItem: ResolversTypes['Transaction'];
+  TransactionPage: ResolverTypeWrapper<Omit<TransactionPage, 'items'> & { items: Array<ResolversTypes['Transaction']> }>;
   Transaction: ResolverTypeWrapper<TransactionDbObject>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Price: ResolverTypeWrapper<Price>;
   AdditionalEntityFields: AdditionalEntityFields;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -162,10 +196,14 @@ export type ResolversParentTypes = {
   Upload: Scalars['Upload'];
   Query: {};
   Mutation: {};
+  PageInput: PageInput;
+  Int: Scalars['Int'];
+  Page: ResolversParentTypes['TransactionPage'];
+  PageItem: ResolversParentTypes['Transaction'];
+  TransactionPage: Omit<TransactionPage, 'items'> & { items: Array<ResolversParentTypes['Transaction']> };
   Transaction: TransactionDbObject;
   ID: Scalars['ID'];
   String: Scalars['String'];
-  Int: Scalars['Int'];
   Price: Price;
   AdditionalEntityFields: AdditionalEntityFields;
   Boolean: Scalars['Boolean'];
@@ -215,11 +253,33 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 }
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  transactions?: Resolver<Maybe<Array<ResolversTypes['Transaction']>>, ParentType, ContextType>;
+  transactions?: Resolver<ResolversTypes['TransactionPage'], ParentType, ContextType, RequireFields<QueryTransactionsArgs, never>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addTransactions?: Resolver<Maybe<Array<ResolversTypes['Transaction']>>, ParentType, ContextType, RequireFields<MutationAddTransactionsArgs, 'file'>>;
+  addTransactions?: Resolver<Array<ResolversTypes['Transaction']>, ParentType, ContextType, RequireFields<MutationAddTransactionsArgs, 'file'>>;
+};
+
+export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
+  __resolveType: TypeResolveFn<'TransactionPage', ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['PageItem']>, ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offset?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type PageItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageItem'] = ResolversParentTypes['PageItem']> = {
+  __resolveType: TypeResolveFn<'Transaction', ParentType, ContextType>;
+};
+
+export type TransactionPageResolvers<ContextType = any, ParentType extends ResolversParentTypes['TransactionPage'] = ResolversParentTypes['TransactionPage']> = {
+  items?: Resolver<Array<ResolversTypes['Transaction']>, ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  offset?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TransactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Transaction'] = ResolversParentTypes['Transaction']> = {
@@ -248,6 +308,9 @@ export type Resolvers<ContextType = any> = {
   Upload?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Page?: PageResolvers<ContextType>;
+  PageItem?: PageItemResolvers<ContextType>;
+  TransactionPage?: TransactionPageResolvers<ContextType>;
   Transaction?: TransactionResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
 };

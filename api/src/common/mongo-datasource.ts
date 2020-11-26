@@ -94,8 +94,7 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
   }
 
   async removeFromCacheById(id: Id): Promise<boolean | void> {
-    const key = this.createCacheKey(id);
     this.loader.clear(id);
-    return this.cache.delete(key);
+    return this.cache.delete(this.createCacheKey(id));
   }
 }

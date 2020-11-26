@@ -5,11 +5,34 @@ export default gql`
   scalar Upload
 
   type Query {
-    transactions: [Transaction!]
+    transactions(page: PageInput): TransactionPage!
   }
 
   type Mutation {
-    addTransactions(file: Upload!): [Transaction!]
+    addTransactions(file: Upload!): [Transaction!]!
+  }
+
+  input PageInput {
+    size: Int!
+    offset: Int!
+  }
+
+  interface Page {
+    items: [PageItem!]!
+    size: Int!
+    offset: Int!
+    count: Int!
+    total: Int!
+  }
+
+  union PageItem = Transaction
+
+  type TransactionPage implements Page {
+    items: [Transaction!]!
+    size: Int!
+    offset: Int!
+    count: Int!
+    total: Int!
   }
 
   type Transaction @entity {
