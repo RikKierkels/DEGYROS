@@ -64,7 +64,7 @@ test('given a file that is not a csv file, when adding transactions, throws an e
 
   expect(errors).toHaveLength(1);
   expect(errors && errors[0].message).toMatch(/invalid file type/i);
-  expect(data.addTransactions).toBeNull();
+  expect(data).toBeNull();
 });
 
 test('given an empty csv file, when adding transactions, throws an error', async () => {
@@ -85,7 +85,7 @@ test('given an empty csv file, when adding transactions, throws an error', async
 
   expect(errors).toHaveLength(1);
   expect(errors && errors[0].message).toMatch(/invalid csv file/i);
-  expect(data.addTransactions).toBeNull();
+  expect(data).toBeNull();
 });
 
 test('given a faulty csv file, when adding transactions, throws an error', async () => {
@@ -110,7 +110,7 @@ test('given a faulty csv file, when adding transactions, throws an error', async
 
   expect(errors).toHaveLength(1);
   expect(errors && errors[0].message).toMatch(/invalid csv file/i);
-  expect(data.addTransactions).toBeNull();
+  expect(data).toBeNull();
 });
 
 test('given a valid csv file without transactions, when adding transactions, returns an empty array', async () => {

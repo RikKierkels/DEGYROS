@@ -8,14 +8,14 @@ type PageResolverItems = PageItems<PageResolverTypes>;
 
 const paginated = <Item extends PageResolverItems>(
   items: Item[],
-  page: PageInput,
+  { size, offset }: PageInput,
   total: number,
 ): PageResolverTypes => ({
   items,
   total,
   count: items.length,
-  size: page.size || items.length,
-  offset: page.offset,
+  size: size || items.length,
+  offset: offset,
 });
 
 export default paginated;

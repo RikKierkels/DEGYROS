@@ -84,24 +84,30 @@ test('given existing transactions, when retrieving transactions, returns all tra
 
     query transactions {
       transactions {
-        id
-        purchaseDate
-        product
-        ISIN
-        exchange
+        items {
+          id
+          purchaseDate
+          product
+          ISIN
+          exchange
+          count
+          rate {
+            ...priceFields
+          }
+          purchaseValue {
+            ...priceFields
+          }
+          costs {
+            ...priceFields
+          }
+          total {
+            ...priceFields
+          }
+        }
+        size
+        offset
         count
-        rate {
-          ...priceFields
-        }
-        purchaseValue {
-          ...priceFields
-        }
-        costs {
-          ...priceFields
-        }
-        total {
-          ...priceFields
-        }
+        total
       }
     }
   `;
