@@ -30,6 +30,9 @@ export const createApolloServer = (dataSources: DataSources): ApolloServer => {
     resolvers,
     typeDefs: [typeDefs, typeDefsMongo],
     inheritResolversFromInterfaces: true,
+    resolverValidationOptions: {
+      requireResolversForResolveType: false,
+    },
   });
   return new ApolloServer({ schema, dataSources: () => dataSources });
 };
