@@ -1,9 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`given existing transactions, when retrieving transactions, returns all transactions sorted by date 1`] = `
+exports[`given existing transactions, when retrieving transactions with an offset and limit, returns the transactions matching the limit and offset 1`] = `
 Object {
   "transactions": Object {
-    "count": 2,
+    "items": Array [
+      Object {
+        "ISIN": "IE00B4X9L533",
+        "costs": Object {
+          "amount": 0,
+          "currency": "",
+          "numberOfDecimals": 0,
+        },
+        "count": 8,
+        "exchange": "EPA",
+        "id": "3dfd8f62-7d5a-4451-8fc6-875834b3aa9e",
+        "product": "HSBC MSCI WORLD",
+        "purchaseDate": 2020-08-31T08:00:00.000Z,
+        "purchaseValue": Object {
+          "amount": -16616,
+          "currency": "EUR",
+          "numberOfDecimals": 2,
+        },
+        "rate": Object {
+          "amount": 2077,
+          "currency": "EUR",
+          "numberOfDecimals": 2,
+        },
+        "total": Object {
+          "amount": -16616,
+          "currency": "EUR",
+          "numberOfDecimals": 2,
+        },
+      },
+    ],
+    "offset": 2,
+    "size": 1,
+    "total": 3,
+  },
+}
+`;
+
+exports[`given existing transactions, when retrieving transactions without an offset and limit, returns all transactions 1`] = `
+Object {
+  "transactions": Object {
     "items": Array [
       Object {
         "ISIN": "IE00B3XXRP09",

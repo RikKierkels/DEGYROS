@@ -1,9 +1,9 @@
 import { UserInputError } from 'apollo-server';
-import { FileUpload } from 'graphql-upload';
 import parse from 'date-fns/parse';
+import { FileUpload } from 'graphql-upload';
 import { TransactionsDb } from '../apollo';
-import { mapStreamTo } from '../common/utils';
 import { formatErrorMessagesByCode, parseCsv } from '../common/csv-parser';
+import { mapStreamTo } from '../common/utils';
 import { Price, TransactionDbObject } from '../generated/graphql';
 
 type TransactionCsv = {

@@ -1,19 +1,17 @@
 import { TransactionsDb } from '../apollo';
-import { Maybe, PageInput, ResolversTypes } from '../generated/graphql';
 import paginated from '../common/paginated';
+import { PageInput, ResolversTypes } from '../generated/graphql';
 
 export const handleGetTransactions = async (
   transactionsDb: TransactionsDb,
-  page?: Maybe<PageInput>,
+  { size, offset }: PageInput,
 ): Promise<ResolversTypes['TransactionPage']> => {
-  page = page || { size: 0, offset: 0 };
-
   const transactions = await transactionsDb.collection
     .find()
-    .skip(page.offset)
-    .limit(page.size)
     .sort({ purchaseDate: -1 })
+    .skip(offset)
+    .limit(size)
     .toArray();
 
-  return paginated(transactions, page, await transactionsDb.collection.countDocuments());
+  return paginated(transactions, offset, await transactionsDb.collection.countDocuments());
 };

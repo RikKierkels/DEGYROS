@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { createApolloServer, createDataSources } from './apollo';
-import { createMongoClient } from './mongo';
 import { environment } from './environment/environment';
+import { createMongoClient } from './mongo';
 
 (async () => {
   const mongoClient = await createMongoClient(environment.mongo.uri);

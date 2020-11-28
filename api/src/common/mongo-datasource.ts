@@ -1,5 +1,7 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { InMemoryLRUCache, KeyValueCache } from 'apollo-server-caching';
+import { EJSON } from 'bson';
+import DataLoader from 'dataloader';
 import {
   Collection,
   CollectionInsertManyOptions,
@@ -9,8 +11,6 @@ import {
   OptionalId,
   WithId,
 } from 'mongodb';
-import DataLoader from 'dataloader';
-import { EJSON } from 'bson';
 import { Context } from '../apollo';
 
 const MINUTE_IN_MS = 60000;

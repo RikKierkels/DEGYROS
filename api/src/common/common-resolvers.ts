@@ -1,5 +1,5 @@
-import { Resolvers } from '../generated/graphql';
 import { DateTimeResolver } from 'graphql-scalars';
+import { Resolvers } from '../generated/graphql';
 
 const resolvers: Resolvers = {
   DateTime: DateTimeResolver,

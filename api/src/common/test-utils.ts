@@ -1,8 +1,8 @@
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
+import { MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApolloServer, DataSources } from '../apollo';
 import { createMongoClient } from '../mongo';
-import { MongoClient } from 'mongodb';
 
 export type MongoMemoryClient = {
   instance: () => MongoClient;

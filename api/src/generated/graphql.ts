@@ -54,7 +54,6 @@ export type Page = {
   items: Array<PageItem>;
   size: Scalars['Int'];
   offset: Scalars['Int'];
-  count: Scalars['Int'];
   total: Scalars['Int'];
 };
 
@@ -65,7 +64,6 @@ export type TransactionPage = Page & {
   items: Array<Transaction>;
   size: Scalars['Int'];
   offset: Scalars['Int'];
-  count: Scalars['Int'];
   total: Scalars['Int'];
 };
 
@@ -265,7 +263,6 @@ export type PageResolvers<ContextType = any, ParentType extends ResolversParentT
   items?: Resolver<Array<ResolversTypes['PageItem']>, ParentType, ContextType>;
   size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   offset?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
@@ -277,7 +274,6 @@ export type TransactionPageResolvers<ContextType = any, ParentType extends Resol
   items?: Resolver<Array<ResolversTypes['Transaction']>, ParentType, ContextType>;
   size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   offset?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

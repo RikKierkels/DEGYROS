@@ -21,7 +21,6 @@ export default gql`
     items: [PageItem!]!
     size: Int!
     offset: Int!
-    count: Int!
     total: Int!
   }
 
@@ -31,7 +30,6 @@ export default gql`
     items: [Transaction!]!
     size: Int!
     offset: Int!
-    count: Int!
     total: Int!
   }
 
