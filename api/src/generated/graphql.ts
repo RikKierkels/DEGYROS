@@ -25,6 +25,7 @@ export type Scalars = {
 
 
 
+
 export type Query = {
   __typename?: 'Query';
   transactions: TransactionPage;
@@ -207,6 +208,10 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
 };
 
+export type IsPositiveDirectiveArgs = {  };
+
+export type IsPositiveDirectiveResolver<Result, Parent, ContextType = any, Args = IsPositiveDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
 export type UnionDirectiveArgs = {   discriminatorField?: Maybe<Scalars['String']>;
   additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>; };
 
@@ -318,6 +323,7 @@ export type Resolvers<ContextType = any> = {
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
 export type DirectiveResolvers<ContextType = any> = {
+  isPositive?: IsPositiveDirectiveResolver<any, any, ContextType>;
   union?: UnionDirectiveResolver<any, any, ContextType>;
   abstractEntity?: AbstractEntityDirectiveResolver<any, any, ContextType>;
   entity?: EntityDirectiveResolver<any, any, ContextType>;

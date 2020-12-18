@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server';
 
 export default gql`
+  directive @isPositive on INPUT_FIELD_DEFINITION
   scalar DateTime
   scalar Upload
 
@@ -13,8 +14,8 @@ export default gql`
   }
 
   input PageInput {
-    size: Int!
-    offset: Int!
+    size: Int! @isPositive
+    offset: Int! @isPositive
   }
 
   interface Page {

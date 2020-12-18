@@ -6,6 +6,7 @@ import { loadFilesSync } from '@graphql-tools/load-files';
 import typeDefs from './schema';
 import { MongoDataSource } from './common/mongo-datasource';
 import { TransactionDbObject } from './generated/graphql';
+import { isPositiveIntDirective } from './common/positive-int-directive';
 
 export type TransactionsDb = MongoDataSource<TransactionDbObject>;
 export type DataSources = {
@@ -29,6 +30,9 @@ export const createApolloServer = (dataSources: DataSources): ApolloServer => {
   const schema = makeExecutableSchema({
     resolvers,
     typeDefs: [typeDefs, typeDefsMongo],
+    schemaDirectives: {
+      isPositive: isPositiveIntDirective,
+    },
     inheritResolversFromInterfaces: true,
     resolverValidationOptions: {
       requireResolversForResolveType: false,
