@@ -34,32 +34,29 @@ export class isPositiveIntDirective extends SchemaDirectiveVisitor {
   }
 }
 
-const isPositiveInt = (value: number) => Math.sign(value) === 1;
-const validate = (name: string) => (value: number) => {
-  if (isPositiveInt(value)) return value;
-  throw new UserInputError(`${name} must be a positive integer`);
-};
-
 class PositiveIntType extends GraphQLScalarType {
   constructor(fieldName: string, type: GraphQLScalarType) {
-    const validator = validate(fieldName);
+    const validate = (value: number) => {
+      if (Math.sign(value) === 1) return value;
+      throw new UserInputError(`${fieldName} must be a positive integer`);
+    };
 
     super({
       name: `Positive_${fieldName}`,
 
       serialize(value: number): number {
         value = type.serialize(value);
-        return validator(value);
+        return validate(value);
       },
 
       parseValue(value: number): number {
         value = type.serialize(value);
-        return type.parseValue(validator(value));
+        return type.parseValue(validate(value));
       },
 
       parseLiteral(ast: ValueNode): number {
         const value = type.parseLiteral(ast, null);
-        return validator(value);
+        return validate(value);
       },
     });
   }
