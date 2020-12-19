@@ -29,7 +29,7 @@ test('when applied to a non-scalar type, throws an error', () => {
   );
 });
 
-test('when applied to an invalid scalar type, throws an error', () => {
+test('when applied to a non int scalar type, throws an error', () => {
   const typeDefs = gql`
     directive @isPositive on INPUT_FIELD_DEFINITION
 
