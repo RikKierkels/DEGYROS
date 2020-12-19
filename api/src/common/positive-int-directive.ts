@@ -1,4 +1,4 @@
-import { SchemaDirectiveVisitor, UserInputError } from 'apollo-server';
+import { SchemaDirectiveVisitor, SchemaError, UserInputError } from 'apollo-server';
 import {
   GraphQLFloat,
   GraphQLInputField,
@@ -22,11 +22,11 @@ export class isPositiveIntDirective extends SchemaDirectiveVisitor {
     const nullableType = isNonNullType(field.type) ? field.type.ofType : field.type;
 
     if (!isScalarType(nullableType)) {
-      throw new Error(`${this.name} directive was applied to a non-scalar type: ${nullableType}`);
+      throw new SchemaError(`${this.name} directive was applied to a non-scalar type: ${nullableType}`);
     }
 
     if (!isScalarIntType(nullableType)) {
-      throw new Error(`${this.name} directive cannot be applied to scalar of type ${nullableType}`);
+      throw new SchemaError(`${this.name} directive cannot be applied to scalar of type ${nullableType}`);
     }
 
     const PosIntType = new PositiveIntType(field.name, nullableType);
