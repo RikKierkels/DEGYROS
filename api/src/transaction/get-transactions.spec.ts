@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 import { createDataSources } from '../apollo';
-import { createApolloTestClient, createMongoMemoryClient, MongoMemoryClient } from '../common/test-utils';
+import { createApolloTestClient, createMongoMemoryClient, MongoMemoryClient } from '../common/utils-test';
 
 let mongoClient: MongoMemoryClient;
 

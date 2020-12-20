@@ -39,12 +39,12 @@ export class MongoDataSource<T extends { _id: Id }> extends DataSource {
   }
 
   createLoader(): DataLoader<Id, T> {
-    return new DataLoader((ids) => {
-      return this.collection
+    return new DataLoader((ids) =>
+      this.collection
         .find({ _id: { $in: ids } } as FilterQuery<T>)
         .toArray()
-        .then(this.preserveOriginalOrder(ids));
-    });
+        .then(this.preserveOriginalOrder(ids)),
+    );
   }
 
   private preserveOriginalOrder(ids: readonly Id[]): (documents: T[]) => T[] {

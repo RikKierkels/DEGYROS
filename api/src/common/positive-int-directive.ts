@@ -36,7 +36,7 @@ export class isPositiveIntDirective extends SchemaDirectiveVisitor {
 
 class PositiveIntType extends GraphQLScalarType {
   constructor(fieldName: string, type: GraphQLScalarType) {
-    const validate = (value: number) => {
+    const validate = (value: number): number => {
       if (Math.sign(value) === 1) return value;
       throw new UserInputError(`${fieldName} must be a positive integer`);
     };
