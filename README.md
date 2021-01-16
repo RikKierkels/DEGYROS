@@ -4,5 +4,5 @@ Hobby project for trying out various languages, frameworks and tooling. DEGYROS 
 
 ## API
 
-[1](/api) Node.js with [TypeScript](https://www.typescriptlang.org/), [Apollo Graphql](https://www.apollographql.com/), [GraphQL code generator](https://graphql-code-generator.com/), [MongoDB](https://www.mongodb.com/)
+[1](/apollo) Node.js with [TypeScript](https://www.typescriptlang.org/), [Apollo Graphql](https://www.apollographql.com/), [GraphQL code generator](https://graphql-code-generator.com/), [MongoDB](https://www.mongodb.com/)
 
